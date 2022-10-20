@@ -78,7 +78,7 @@ class DuckPondIOManager(IOManager):
 
         if not isinstance(select_statement, SQL):
             raise ValueError(
-                r"Expected asset to return a SQL; got {select_statement!r}"
+                f"Expected asset to return a SQL; got {select_statement!r}"
             )
 
         self.duckdb.query(
