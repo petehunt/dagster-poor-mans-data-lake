@@ -8,6 +8,9 @@ if __name__ == "__main__":
             "dagster",
             "pandas",
             "duckdb",
+            "sqlescapy",
+            "html5lib",
+            "lxml",
         ],
         extras_require={
             "dev": ["dagit", "pytest", "localstack", "awscli", "awscli-local"]

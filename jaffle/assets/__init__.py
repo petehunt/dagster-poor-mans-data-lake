@@ -4,24 +4,36 @@ import pandas as pd
 
 
 @asset
-def cereals() -> SQL:
-    return SQL(
-        "select * from $df", df=pd.read_csv("https://docs.dagster.io/assets/cereal.csv")
-    )
+def population() -> SQL:
+    df = pd.read_html(
+        "https://en.wikipedia.org/wiki/List_of_countries_by_population_(United_Nations)",
+    )[0]
+    df.columns = [
+        "country",
+        "continent",
+        "subregion",
+        "population_2018",
+        "population_2019",
+        "pop_change",
+    ]
+    df["pop_change"] = [
+        float(str(row).rstrip("%").replace("\u2212", "-")) for row in df["pop_change"]
+    ]
+    return SQL("select * from $df", df=df)
 
 
 @asset
-def mfg_popularity(cereals: SQL) -> SQL:
+def continent_population(population: SQL) -> SQL:
     return SQL(
-        "select mfr, count(*) as num_cereals from $cereals group by 1 order by 2 desc",
-        cereals=cereals,
+        "select continent, avg(pop_change) as avg_pop_change from $population group by 1 order by 2 desc",
+        population=population,
     )
 
 
 @asset(required_resource_keys={"duckdb"})
-def print_mfg_popularity(context, mfg_popularity: SQL):
+def print_continent_population(context, continent_population: SQL):
     context.log.info(f"Final asset:")
-    context.log.info(context.resources.duckdb.query(mfg_popularity))
+    context.log.info(context.resources.duckdb.query(continent_population))
 
 
 @asset

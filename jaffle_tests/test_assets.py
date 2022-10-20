@@ -1,16 +1,16 @@
-from jaffle.assets import cereals, mfg_popularity
+from jaffle.assets import population, continent_population
 from jaffle.duckpond import DuckDB
 
 
 def test_assets():
-    c = cereals()
-    p = mfg_popularity(c)
+    p = population()
+    c = continent_population(p)
     assert (
-        p.sql
-        == "select mfr, count(*) as num_cereals from $cereals group by 1 order by 2 desc"
+        c.sql
+        == "select continent, avg(pop_change) as avg_pop_change from $population group by 1 order by 2 desc"
     )
-    assert "cereals" in p.bindings
-    df = DuckDB().query(p)
+    assert "population" in c.bindings
+    df = DuckDB().query(c)
     top = df.loc[0]
-    assert top["mfr"] == "K"
-    assert top["num_cereals"] == 23
+    assert top["continent"] == "Africa"
+    assert round(top["avg_pop_change"]) == 2
