@@ -5,9 +5,22 @@ import pandas as pd
 
 @asset
 def population() -> SQL:
+    
+    
     df = pd.read_html(
         "https://en.wikipedia.org/wiki/List_of_countries_by_population_(United_Nations)",
     )[0]
+    # Wikipedia had at the time of this writing a "request that article title to be changed"
+    # which means that the actual table of data is located at index [1] instead. I added this
+    # bit hackish code to find the correct index, but this too will of course break if they change
+    # the title (and by extension the URL)
+    if df.columns[0] != 'Country / Area':
+        df = pd.read_html(
+            "https://en.wikipedia.org/wiki/List_of_countries_by_population_(United_Nations)",
+        )[1]
+        assert df.columns[0] == 'Country / Area'
+
+
     df.columns = [
         "country",
         "continent",
