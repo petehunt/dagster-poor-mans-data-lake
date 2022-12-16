@@ -12,7 +12,7 @@ set s3_use_ssl='false';
 set s3_url_style='path';
 """
 
-defs =  Definitions(
+defs = Definitions(
     assets=load_assets_from_package_module(assets),
     resources={"io_manager":  DuckPondIOManager("datalake", DuckDB(DUCKDB_LOCAL_CONFIG))}
 )
