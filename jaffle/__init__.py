@@ -5,7 +5,7 @@ from jaffle import assets
 from jaffle.duckpond import DuckPondIOManager, DuckDB
 
 
-duckdb_res = DuckDB("""
+duckdb_localstack = DuckDB("""
 set s3_access_key_id='test';
 set s3_secret_access_key='test';
 set s3_endpoint='localhost:4566';
@@ -22,5 +22,5 @@ def duckpond_io_manager(init_context):
 
 defs =  Definitions(
     assets=load_assets_from_package_module(assets),
-    resources={"io_manager": duckpond_io_manager, "duckdb": duckdb_res},
+    resources={"io_manager": duckpond_io_manager, "duckdb": duckdb_localstack},
 )
