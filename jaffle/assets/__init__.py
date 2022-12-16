@@ -30,10 +30,10 @@ def continent_population(population: SQL) -> SQL:
     )
 
 
-@asset(required_resource_keys={"duckdb"})
+@asset
 def print_continent_population(context, continent_population: SQL):
     context.log.info(f"Final asset:")
-    context.log.info(context.resources.duckdb.query(continent_population))
+    context.log.info(context.resources.io_manager.duckdb.query(continent_population))
 
 
 @asset
@@ -160,9 +160,10 @@ select * from final
     )
 
 
-@asset(required_resource_keys={"duckdb"})
+@asset
 def preview_all(context, customers: SQL, orders: SQL):
+    duckdb = context.resources.io_manager.duckdb
     context.log.info(f"Customers:")
-    context.log.info(context.resources.duckdb.query(customers))
+    context.log.info(duckdb.query(customers))
     context.log.info(f"Orders:")
-    context.log.info(context.resources.duckdb.query(orders))
+    context.log.info(duckdb.query(orders))
