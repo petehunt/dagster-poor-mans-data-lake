@@ -1,9 +1,11 @@
-from duckdb import connect
-from dagster import IOManager
-import pandas as pd
-from sqlescapy import sqlescape
 from string import Template
 from typing import Mapping
+
+import pandas as pd
+from dagster import ConfigurableIOManager
+from dagster._utils.cached_method import cached_method
+from duckdb import connect
+from sqlescapy import sqlescape
 
 
 class SQL:
@@ -59,11 +61,14 @@ class DuckDB:
         return result.df()
 
 
-class DuckPondIOManager(IOManager):
-    def __init__(self, bucket_name: str, duckdb: DuckDB, prefix=""):
-        self.bucket_name = bucket_name
-        self.duckdb = duckdb
-        self.prefix = prefix
+class DuckPondIOManager(ConfigurableIOManager):
+    bucket_name: str
+    duckdb_options: str
+    prefix: str = ""
+
+    @property
+    def duckdb(self) -> DuckDB:
+        return DuckDB(self.duckdb_options)
 
     def _get_s3_url(self, context):
         if context.has_asset_key:
@@ -77,9 +82,7 @@ class DuckPondIOManager(IOManager):
             return
 
         if not isinstance(select_statement, SQL):
-            raise ValueError(
-                f"Expected asset to return a SQL; got {select_statement!r}"
-            )
+            raise ValueError(f"Expected asset to return a SQL; got {select_statement!r}")
 
         self.duckdb.query(
             SQL(

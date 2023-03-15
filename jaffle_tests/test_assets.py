@@ -1,4 +1,4 @@
-from jaffle.assets import population, continent_population
+from jaffle.assets import continent_population, population
 from jaffle.duckpond import DuckDB
 
 

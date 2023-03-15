@@ -1,6 +1,7 @@
-from dagster import asset
-from jaffle.duckpond import SQL
 import pandas as pd
+from dagster import OpExecutionContext, asset
+
+from jaffle.duckpond import SQL, DuckPondIOManager
 
 
 @asset
@@ -31,9 +32,11 @@ def continent_population(population: SQL) -> SQL:
 
 
 @asset
-def print_continent_population(context, continent_population: SQL):
-    context.log.info(f"Final asset:")
-    context.log.info(context.resources.io_manager.duckdb.query(continent_population))
+def print_continent_population(
+    context: OpExecutionContext, io_manager: DuckPondIOManager, continent_population: SQL
+):
+    context.log.info("Final asset:")
+    context.log.info(io_manager.duckdb.query(continent_population))
 
 
 @asset
@@ -161,9 +164,10 @@ select * from final
 
 
 @asset
-def preview_all(context, customers: SQL, orders: SQL):
-    duckdb = context.resources.io_manager.duckdb
-    context.log.info(f"Customers:")
-    context.log.info(duckdb.query(customers))
-    context.log.info(f"Orders:")
-    context.log.info(duckdb.query(orders))
+def preview_all(
+    context: OpExecutionContext, io_manager: DuckPondIOManager, customers: SQL, orders: SQL
+):
+    context.log.info("Customers:")
+    context.log.info(io_manager.duckdb.query(customers))
+    context.log.info("Orders:")
+    context.log.info(io_manager.duckdb.query(orders))
