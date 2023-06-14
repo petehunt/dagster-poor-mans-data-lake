@@ -4,7 +4,7 @@ set -euo pipefail
 pip install --upgrade pip
 pip install dagster
 pip install pandas
-pip install duckdb
+pip install duckdb==0.8.0
 pip install sqlescapy
 pip install html5lib
 pip install lxml
