@@ -41,7 +41,7 @@ def collect_dataframes(s: SQL) -> Mapping[str, pd.DataFrame]:
 
 
 class DuckDB:
-    def __init__(self, options="", url=":memory"):
+    def __init__(self, options="", url=":memory:"):
         self.options = options
         self.url = url
 
